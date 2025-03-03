@@ -8,9 +8,11 @@ echo "Setting up PostgreSQL on Alpine Linux..."
 export PGHOST=/postgres-volume/run/postgresql
 export PGDATA="$PGHOST/data"
 
+# Ensure the directory exists and change ownership
 mkdir -p /preflight/project-to-check
-chmod 777 /preflight/project-to-check || sudo chmod 777 /preflight/project-to-check
+chown "$(whoami)" /preflight/project-to-check || echo "Skipping chown"
 
+# Create a .env file
 cat <<EOF > /preflight/project-to-check/.env
 PGHOST=/postgres-volume/run/postgresql
 PGDATABASE=mycode
