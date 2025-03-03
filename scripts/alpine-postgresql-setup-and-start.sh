@@ -14,8 +14,8 @@ mkdir -p /preflight/project-to-check
 chmod 777 /preflight/project-to-check || echo "Skipping chmod due to permissions"
 
 # Now write environment variables
-echo "Exporting environment variables to file..."
-cat <<EOF > /preflight/project-to-check/env-vars.sh
+echo "Exporting environment variables to /tmp/env-vars.sh..."
+cat <<EOF > /tmp/env-vars.sh
 export NEXTAUTH_URL=$NEXTAUTH_URL
 export NEXTAUTH_SECRET=$NEXTAUTH_SECRET
 export CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME
@@ -23,7 +23,8 @@ export CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY
 export CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET
 EOF
 
-chmod +x /preflight/project-to-check/env-vars.sh
+chmod +x /tmp/env-vars.sh
+
 
 echo "Adding exclusive data directory permissions for postgres user..."
 chmod 0700 "$PGDATA"
