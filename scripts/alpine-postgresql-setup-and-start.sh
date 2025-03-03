@@ -5,36 +5,36 @@ set -o errexit
 
 echo "Setting up PostgreSQL on Alpine Linux..."
 
-export PGHOST=${PGHOST:-"/postgres-volume/run/postgresql"}
+export PGHOST="/postgres-volume/run/postgresql"
 export PGDATA="$PGHOST/data"
 
-export PGDATABASE=${PGDATABASE:-"default_db"}
-export PGUSERNAME=${PGUSERNAME:-"default_user"}
-export PGPASSWORD=${PGPASSWORD:-"default_pass"}
-
-export NEXTAUTH_URL=${NEXTAUTH_URL:-"default_url"}
-export NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-"default_secret"}
-export CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-"default_cloud"}
-export CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-"default_api_key"}
-export CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-"default_api_secret"}
-
-# Ensure the directory exists
+# Ensure directory exists
 mkdir -p /preflight/project-to-check
 
-# Create .env file for dotenv-safe
+# Change ownership to the current user (avoid root-only access)
+chown "$(whoami)" /preflight/project-to-check || echo "Skipping chown"
+
+# Allow writing to the directory
+chmod 777 /preflight/project-to-check || echo "Skipping chmod"
+
+# Create a .env file to satisfy dotenv-safe
 cat <<EOF > /preflight/project-to-check/.env
 PGHOST=$PGHOST
-PGDATABASE=$PGDATABASE
-PGUSERNAME=$PGUSERNAME
-PGPASSWORD=$PGPASSWORD
-NEXTAUTH_URL=$NEXTAUTH_URL
-NEXTAUTH_SECRET=$NEXTAUTH_SECRET
-CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME
-CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY
-CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET
+PGDATABASE=${PGDATABASE:-"default_db"}
+PGUSERNAME=${PGUSERNAME:-"default_user"}
+PGPASSWORD=${PGPASSWORD:-"default_pass"}
+NEXTAUTH_URL=${NEXTAUTH_URL:-"default_url"}
+NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-"default_secret"}
+CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-"default_cloud"}
+CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-"default_api_key"}
+CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-"default_api_secret"}
 EOF
 
-chmod 600 /preflight/project-to-check/.env
+# Ensure .env is readable by the correct user
+chmod 644 /preflight/project-to-check/.env || echo "Skipping chmod"
+
+echo "Database setup complete!"
+
 
 
 echo "Adding exclusive data directory permissions for postgres user..."
