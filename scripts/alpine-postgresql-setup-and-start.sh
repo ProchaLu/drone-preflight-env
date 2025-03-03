@@ -33,28 +33,23 @@ echo "listen_addresses='*'" >> "/postgres-volume/run/postgresql/data/postgresql.
 echo "Starting PostgreSQL..."
 pg_ctl start -D "/postgres-volume/run/postgresql/data"
 
-# ✅ Wait for PostgreSQL to be fully ready
-echo "Waiting for PostgreSQL to be ready..."
-for i in {1..10}; do
-  if psql -U postgres -c "SELECT 1" > /dev/null 2>&1; then
-    echo "PostgreSQL is ready!"
-    break
-  fi
-  echo "PostgreSQL not ready yet... retrying in 2 seconds"
+# ✅ Fix: Wait for PostgreSQL to be fully ready before creating the database
+echo "Waiting for PostgreSQL to start accepting connections..."
+until psql -U postgres -d postgres -c "SELECT 1" > /dev/null 2>&1; do
+  echo "PostgreSQL is starting... waiting..."
   sleep 2
 done
 
-# ✅ Ensure PostgreSQL is accessible before proceeding
-if ! psql -U postgres -c "SELECT 1" > /dev/null 2>&1; then
-  echo "Error: Unable to connect to PostgreSQL"
-  exit 1
-fi
+echo "PostgreSQL is ready!"
 
+# ✅ Ensure the database is created BEFORE running the readiness check
 echo "Creating database, user, and schema..."
-psql -U postgres postgres <<SQL
+psql -U postgres -d postgres <<SQL
   CREATE DATABASE $PGDATABASE;
   CREATE USER $PGUSERNAME WITH ENCRYPTED PASSWORD '$PGPASSWORD';
   GRANT ALL PRIVILEGES ON DATABASE $PGDATABASE TO $PGUSERNAME;
   \connect $PGDATABASE
   CREATE SCHEMA $PGUSERNAME AUTHORIZATION $PGUSERNAME;
 SQL
+
+echo "Database setup complete!"
