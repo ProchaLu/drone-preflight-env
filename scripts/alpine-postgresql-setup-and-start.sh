@@ -9,13 +9,21 @@ export PGHOST="/postgres-volume/run/postgresql"
 export PGDATA="$PGHOST/data"
 
 # Ensure directory exists
-mkdir -p /preflight/project-to-check
+mkdir -p /preflight/project-to-check || echo "Skipping mkdir"
 
-# Change ownership to the current user (avoid root-only access)
-chown "$(whoami)" /preflight/project-to-check || echo "Skipping chown"
+# Change ownership only if possible
+if chown "$(whoami)" /preflight/project-to-check 2>/dev/null; then
+  echo "Ownership updated"
+else
+  echo "Skipping chown: Permission denied"
+fi
 
-# Allow writing to the directory
-chmod 777 /preflight/project-to-check || echo "Skipping chmod"
+# Change permissions only if possible
+if chmod 777 /preflight/project-to-check 2>/dev/null; then
+  echo "Permissions updated"
+else
+  echo "Skipping chmod: Permission denied"
+fi
 
 # Default values for required environment variables
 declare -A required_env_vars=(
@@ -57,8 +65,9 @@ for key in "${!required_env_vars[@]}"; do
   fi
 done
 
-# Create a .env file to satisfy dotenv-safe
-cat <<EOF > /preflight/project-to-check/.env
+# Create a .env file
+TMP_ENV_FILE="/tmp/.env"
+cat <<EOF > "$TMP_ENV_FILE"
 PGHOST=$PGHOST
 PGDATABASE=$PGDATABASE
 PGUSERNAME=$PGUSERNAME
@@ -70,8 +79,12 @@ CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY
 CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET
 EOF
 
-# Ensure .env is readable by the correct user
-chmod 644 /preflight/project-to-check/.env || echo "Skipping chmod"
+# Attempt to move the file to /preflight/project-to-check/
+if mv "$TMP_ENV_FILE" /preflight/project-to-check/.env 2>/dev/null; then
+  echo ".env file created successfully"
+else
+  echo "Warning: Could not write to /preflight/project-to-check/.env, keeping in /tmp"
+fi
 
 echo "Database setup complete!"
 
