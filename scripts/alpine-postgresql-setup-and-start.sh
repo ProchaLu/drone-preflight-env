@@ -12,11 +12,11 @@ export PGUSERNAME="${PGUSERNAME:-project_to_check}"
 export PGPASSWORD="${PGPASSWORD:-project_to_check}"
 
 # ✅ Ensure additional required environment variables are set
-export NEXTAUTH_URL="${NEXTAUTH_URL:-mycode}"
-export NEXTAUTH_SECRET="${NEXTAUTH_SECRET:-mycode}"
-export CLOUDINARY_CLOUD_NAME="${CLOUDINARY_CLOUD_NAME:-mycode}"
-export CLOUDINARY_API_KEY="${CLOUDINARY_API_KEY:-mycode}"
-export CLOUDINARY_API_SECRET="${CLOUDINARY_API_SECRET:-mycode}"
+export NEXTAUTH_URL="${NEXTAUTH_URL:-http://localhost:3000}"
+export NEXTAUTH_SECRET="${NEXTAUTH_SECRET:-defaultsecret}"
+export CLOUDINARY_CLOUD_NAME="${CLOUDINARY_CLOUD_NAME:-default}"
+export CLOUDINARY_API_KEY="${CLOUDINARY_API_KEY:-default}"
+export CLOUDINARY_API_SECRET="${CLOUDINARY_API_SECRET:-default}"
 
 echo "Adding exclusive data directory permissions for postgres user..."
 chmod 0700 "/postgres-volume/run/postgresql/data"
@@ -33,7 +33,7 @@ echo "listen_addresses='*'" >> "/postgres-volume/run/postgresql/data/postgresql.
 echo "Starting PostgreSQL..."
 pg_ctl start -D "/postgres-volume/run/postgresql/data"
 
-# ✅ Fix: Wait for PostgreSQL to be fully ready before creating the database
+# ✅ Wait for PostgreSQL to be fully ready before creating the database
 echo "Waiting for PostgreSQL to start accepting connections..."
 until psql -U postgres -d postgres -c "SELECT 1" > /dev/null 2>&1; do
   echo "PostgreSQL is starting... waiting..."
@@ -42,7 +42,7 @@ done
 
 echo "PostgreSQL is ready!"
 
-# ✅ Ensure the database is created BEFORE running the readiness check
+# ✅ Ensure the database is created BEFORE running the migration
 echo "Creating database, user, and schema..."
 psql -U postgres -d postgres <<SQL
   CREATE DATABASE $PGDATABASE;
@@ -53,3 +53,23 @@ psql -U postgres -d postgres <<SQL
 SQL
 
 echo "Database setup complete!"
+
+# ✅ Fix: Create a .env file with required variables before running migration
+echo "Creating .env file for migration..."
+cat <<EOF > /preflight/project-to-check/.env
+PGHOST=$PGHOST
+PGDATABASE=$PGDATABASE
+PGUSERNAME=$PGUSERNAME
+PGPASSWORD=$PGPASSWORD
+NEXTAUTH_URL=$NEXTAUTH_URL
+NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME
+CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY
+CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET
+EOF
+
+chmod 644 /preflight/project-to-check/.env
+
+echo "Running migrations..."
+cd /preflight/project-to-check
+env $(cat .env | xargs) pnpm migrate up
