@@ -17,17 +17,27 @@ chown "$(whoami)" /preflight/project-to-check || echo "Skipping chown"
 # Allow writing to the directory
 chmod 777 /preflight/project-to-check || echo "Skipping chmod"
 
+# Export environment variables globally so they persist
+export PGDATABASE="mycode"
+export PGUSERNAME="mycode"
+export PGPASSWORD="mycode"
+export NEXTAUTH_URL="mycode"
+export NEXTAUTH_SECRET="mycode"
+export CLOUDINARY_CLOUD_NAME="mycode"
+export CLOUDINARY_API_KEY="mycode"
+export CLOUDINARY_API_SECRET="mycode"
+
 # Create a .env file to satisfy dotenv-safe
 cat <<EOF > /preflight/project-to-check/.env
 PGHOST=$PGHOST
-PGDATABASE=${PGDATABASE:-"default_db"}
-PGUSERNAME=${PGUSERNAME:-"default_user"}
-PGPASSWORD=${PGPASSWORD:-"default_pass"}
-NEXTAUTH_URL=${NEXTAUTH_URL:-"default_url"}
-NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-"default_secret"}
-CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-"default_cloud"}
-CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-"default_api_key"}
-CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-"default_api_secret"}
+PGDATABASE=$PGDATABASE
+PGUSERNAME=$PGUSERNAME
+PGPASSWORD=$PGPASSWORD
+NEXTAUTH_URL=$NEXTAUTH_URL
+NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME
+CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY
+CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET
 EOF
 
 # Ensure .env is readable by the correct user
@@ -35,7 +45,9 @@ chmod 644 /preflight/project-to-check/.env || echo "Skipping chmod"
 
 echo "Database setup complete!"
 
-
+# Export variables to the shell so they are available in subsequent scripts
+printenv | grep -E "PGHOST|PGDATABASE|PGUSERNAME|PGPASSWORD|NEXTAUTH_URL|NEXTAUTH_SECRET|CLOUDINARY_CLOUD_NAME|CLOUDINARY_API_KEY|CLOUDINARY_API_SECRET" >> /etc/environment
+echo "Environment variables exported globally"
 
 echo "Adding exclusive data directory permissions for postgres user..."
 chmod 0700 "$PGDATA"
