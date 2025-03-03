@@ -7,18 +7,18 @@ echo "Setting up PostgreSQL on Alpine Linux..."
 
 export PGHOST=/postgres-volume/run/postgresql
 export PGDATA="$PGHOST/data"
-export NEXTAUTH_URL="https://example.com"
-export NEXTAUTH_SECRET="supersecret"
-export CLOUDINARY_CLOUD_NAME="cloudname"
-export CLOUDINARY_API_KEY="apikey"
-export CLOUDINARY_API_SECRET="apisecret"
 
-export VAR_FROM_POSTGRES_SCRIPT="test-value"
+echo "Exporting environment variables to file..."
 
+cat <<EOF > /preflight/project-to-check/env-vars.sh
+export NEXTAUTH_URL=$NEXTAUTH_URL
+export NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+export CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME
+export CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY
+export CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET
+EOF
 
-echo "=== Checking Environment Variables Inside PostgreSQL Script ==="
-printenv | grep -E "NEXTAUTH_URL|NEXTAUTH_SECRET|CLOUDINARY_"
-echo "=============================================================="
+chmod +x /preflight/project-to-check/env-vars.sh
 
 echo "Adding exclusive data directory permissions for postgres user..."
 chmod 0700 "$PGDATA"
