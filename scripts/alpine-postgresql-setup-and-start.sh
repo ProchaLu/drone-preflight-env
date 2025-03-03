@@ -8,8 +8,13 @@ echo "Setting up PostgreSQL on Alpine Linux..."
 export PGHOST=/postgres-volume/run/postgresql
 export PGDATA="$PGHOST/data"
 
-echo "Exporting environment variables to file..."
+mkdir -p /preflight/project-to-check
 
+# Change ownership to allow writing
+chmod 777 /preflight/project-to-check || echo "Skipping chmod due to permissions"
+
+# Now write environment variables
+echo "Exporting environment variables to file..."
 cat <<EOF > /preflight/project-to-check/env-vars.sh
 export NEXTAUTH_URL=$NEXTAUTH_URL
 export NEXTAUTH_SECRET=$NEXTAUTH_SECRET
