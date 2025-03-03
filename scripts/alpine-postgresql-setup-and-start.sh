@@ -1,29 +1,41 @@
 #!/usr/bin/env bash
 
-# Exit if any command exits with a non-zero exit code
+# Exit if any command fails
 set -o errexit
 
 echo "Setting up PostgreSQL on Alpine Linux..."
 
-export PGHOST=/postgres-volume/run/postgresql
+export PGHOST=${PGHOST:-"/postgres-volume/run/postgresql"}
 export PGDATA="$PGHOST/data"
 
-# Ensure the directory exists and change ownership
-mkdir -p /preflight/project-to-check
-chown "$(whoami)" /preflight/project-to-check || echo "Skipping chown"
+export PGDATABASE=${PGDATABASE:-"default_db"}
+export PGUSERNAME=${PGUSERNAME:-"default_user"}
+export PGPASSWORD=${PGPASSWORD:-"default_pass"}
 
-# Create a .env file
+export NEXTAUTH_URL=${NEXTAUTH_URL:-"default_url"}
+export NEXTAUTH_SECRET=${NEXTAUTH_SECRET:-"default_secret"}
+export CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME:-"default_cloud"}
+export CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY:-"default_api_key"}
+export CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET:-"default_api_secret"}
+
+# Ensure the directory exists
+mkdir -p /preflight/project-to-check
+
+# Create .env file for dotenv-safe
 cat <<EOF > /preflight/project-to-check/.env
-PGHOST=/postgres-volume/run/postgresql
-PGDATABASE=mycode
-PGUSERNAME=mycode
-PGPASSWORD=mycode
-NEXTAUTH_URL=mycode
-NEXTAUTH_SECRET=mycode
-CLOUDINARY_CLOUD_NAME=mycode
-CLOUDINARY_API_KEY=mycode
-CLOUDINARY_API_SECRET=mycode
+PGHOST=$PGHOST
+PGDATABASE=$PGDATABASE
+PGUSERNAME=$PGUSERNAME
+PGPASSWORD=$PGPASSWORD
+NEXTAUTH_URL=$NEXTAUTH_URL
+NEXTAUTH_SECRET=$NEXTAUTH_SECRET
+CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME
+CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY
+CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET
 EOF
+
+chmod 600 /preflight/project-to-check/.env
+
 
 echo "Adding exclusive data directory permissions for postgres user..."
 chmod 0700 "$PGDATA"
