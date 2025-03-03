@@ -17,15 +17,45 @@ chown "$(whoami)" /preflight/project-to-check || echo "Skipping chown"
 # Allow writing to the directory
 chmod 777 /preflight/project-to-check || echo "Skipping chmod"
 
-# Export environment variables globally so they persist
-export PGDATABASE="mycode"
-export PGUSERNAME="mycode"
-export PGPASSWORD="mycode"
-export NEXTAUTH_URL="mycode"
-export NEXTAUTH_SECRET="mycode"
-export CLOUDINARY_CLOUD_NAME="mycode"
-export CLOUDINARY_API_KEY="mycode"
-export CLOUDINARY_API_SECRET="mycode"
+# Default values for required environment variables
+declare -A required_env_vars=(
+  [PGHOST]="/postgres-volume/run/postgresql"
+  [PGDATABASE]="mycode"
+  [PGUSERNAME]="mycode"
+  [PGPASSWORD]="mycode"
+  [NEXTAUTH_URL]="mycode"
+  [NEXTAUTH_SECRET]="mycode"
+  [CLOUDINARY_CLOUD_NAME]="mycode"
+  [CLOUDINARY_API_KEY]="mycode"
+  [CLOUDINARY_API_SECRET]="mycode"
+)
+
+# Check if an `.env.example` or `.env` file exists in the project
+if [[ -f "/preflight/project-to-check/.env.example" ]]; then
+  ENV_FILE="/preflight/project-to-check/.env.example"
+elif [[ -f "/preflight/project-to-check/.env" ]]; then
+  ENV_FILE="/preflight/project-to-check/.env"
+else
+  ENV_FILE=""
+fi
+
+# If an env file exists, read it and set missing variables
+if [[ -n "$ENV_FILE" ]]; then
+  echo "Loading environment variables from $ENV_FILE"
+  while IFS='=' read -r key value || [[ -n "$key" ]]; do
+    # Ignore empty lines and comments
+    if [[ -n "$key" && "$key" != \#* ]]; then
+      export "$key"="${value:-mycode}"
+    fi
+  done < "$ENV_FILE"
+fi
+
+# Ensure all required variables are set
+for key in "${!required_env_vars[@]}"; do
+  if [[ -z "${!key}" ]]; then
+    export "$key"="${required_env_vars[$key]}"
+  fi
+done
 
 # Create a .env file to satisfy dotenv-safe
 cat <<EOF > /preflight/project-to-check/.env
