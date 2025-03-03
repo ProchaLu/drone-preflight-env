@@ -88,9 +88,12 @@ fi
 
 echo "Database setup complete!"
 
-# Export variables to the shell so they are available in subsequent scripts
-printenv | grep -E "PGHOST|PGDATABASE|PGUSERNAME|PGPASSWORD|NEXTAUTH_URL|NEXTAUTH_SECRET|CLOUDINARY_CLOUD_NAME|CLOUDINARY_API_KEY|CLOUDINARY_API_SECRET" >> /etc/environment
-echo "Environment variables exported globally"
+# ✅ **Fix: Remove /etc/environment modification**
+echo "Skipping /etc/environment modification due to permission issues"
+
+# ✅ **Instead, print environment variables for debugging**
+echo "Exported Environment Variables:"
+printenv | grep -E "PGHOST|PGDATABASE|PGUSERNAME|PGPASSWORD|NEXTAUTH_URL|NEXTAUTH_SECRET|CLOUDINARY_CLOUD_NAME|CLOUDINARY_API_KEY|CLOUDINARY_API_SECRET"
 
 echo "Adding exclusive data directory permissions for postgres user..."
 chmod 0700 "$PGDATA"
