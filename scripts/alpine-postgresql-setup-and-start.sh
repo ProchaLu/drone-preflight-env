@@ -6,12 +6,19 @@ set -o errexit
 echo "Setting up PostgreSQL on Alpine Linux..."
 
 export PGHOST=/postgres-volume/run/postgresql
-export NEXTAUTH_URL="mycode"
-export NEXTAUTH_SECRET="mycode"
-export CLOUDINARY_CLOUD_NAME="mycode"
-export CLOUDINARY_API_KEY="mycode"
-export CLOUDINARY_API_SECRET="mycode"
 export PGDATA="$PGHOST/data"
+
+cat <<EOF > /preflight/project-to-check/.env
+PGHOST=/postgres-volume/run/postgresql
+PGDATABASE=mycode
+PGUSERNAME=mycode
+PGPASSWORD=mycode
+NEXTAUTH_URL=mycode
+NEXTAUTH_SECRET=mycode
+CLOUDINARY_CLOUD_NAME=mycode
+CLOUDINARY_API_KEY=mycode
+CLOUDINARY_API_SECRET=mycode
+EOF
 
 echo "Adding exclusive data directory permissions for postgres user..."
 chmod 0700 "$PGDATA"
