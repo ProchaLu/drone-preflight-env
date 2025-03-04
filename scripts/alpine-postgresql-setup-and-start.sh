@@ -28,10 +28,10 @@ echo "[Postgres][$(date -u +"%Y-%m-%dT%H:%M:%SZ")] Enabling connections on all a
 echo "listen_addresses='*'" >> "$PGDATA/postgresql.conf"
 
 echo "[Postgres][$(date -u +"%Y-%m-%dT%H:%M:%SZ")] Starting PostgreSQL with pg_ctl..."
-# pg_ctl start -D "$PGDATA" --no-wait
+pg_ctl start -D "$PGDATA"
 
 echo "[Postgres][$(date -u +"%Y-%m-%dT%H:%M:%SZ")] Checking PostgreSQL status..."
-# pg_ctl status -D "$PGDATA"
+pg_ctl status -D "$PGDATA"
 
 echo "[Postgres][$(date -u +"%Y-%m-%dT%H:%M:%SZ")] Creating database, user and schema..."
 psql -U postgres postgres << SQL
