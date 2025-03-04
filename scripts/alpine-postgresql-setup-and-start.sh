@@ -5,10 +5,10 @@ set -o errexit
 
 echo "Setting up PostgreSQL on Alpine Linux..."
 
-export PGHOST=/postgres-volume/run/postgresql
-export PGDATA="$PGHOST/data"
+PGHOST=/postgres-volume/run/postgresql
+PGDATA="$PGHOST/data"
 
-echo "EXPORT_ENV_VARS"
+echo "export env vars..."
 export NEXTAUTH_URL="https://example.com"
 export NEXTAUTH_SECRET="supersecret"
 export CLOUDINARY_CLOUD_NAME="cloudname"
