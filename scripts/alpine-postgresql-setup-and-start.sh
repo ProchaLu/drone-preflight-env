@@ -8,22 +8,12 @@ echo "Setting up PostgreSQL on Alpine Linux..."
 export PGHOST=/postgres-volume/run/postgresql
 export PGDATA="$PGHOST/data"
 
-mkdir -p /preflight/project-to-check
-
-# Change ownership to allow writing
-chmod 777 /preflight/project-to-check || echo "Skipping chmod due to permissions"
-
-# Now write environment variables
-echo "Exporting environment variables to /tmp/env-vars.sh..."
-cat <<EOF > /tmp/env-vars.sh
-export NEXTAUTH_URL=$NEXTAUTH_URL
-export NEXTAUTH_SECRET=$NEXTAUTH_SECRET
-export CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME
-export CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY
-export CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET
-EOF
-
-chmod +x /tmp/env-vars.sh
+echo "EXPORT_ENV_VARS"
+echo "NEXTAUTH_URL=$NEXTAUTH_URL"
+echo "NEXTAUTH_SECRET=$NEXTAUTH_SECRET"
+echo "CLOUDINARY_CLOUD_NAME=$CLOUDINARY_CLOUD_NAME"
+echo "CLOUDINARY_API_KEY=$CLOUDINARY_API_KEY"
+echo "CLOUDINARY_API_SECRET=$CLOUDINARY_API_SECRET"
 
 
 echo "Adding exclusive data directory permissions for postgres user..."
