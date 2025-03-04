@@ -15,11 +15,6 @@ echo "CLOUDINARY_CLOUD_NAME=project_to_check"
 echo "CLOUDINARY_API_KEY=project_to_check"
 echo "CLOUDINARY_API_SECRET=project_to_check"
 
-echo "=== Exporting Environment Variables ==="
-env | grep -E "NEXTAUTH_URL|NEXTAUTH_SECRET|CLOUDINARY_CLOUD_NAME|CLOUDINARY_API_KEY|CLOUDINARY_API_SECRET"
-
-
-
 echo "Adding exclusive data directory permissions for postgres user..."
 chmod 0700 "$PGDATA"
 
