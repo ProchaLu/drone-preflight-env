@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# Exit if any command exits with a non-zero exit code
 set -o errexit
 
 echo "Setting up PostgreSQL on Alpine Linux..."
@@ -8,14 +7,11 @@ echo "Setting up PostgreSQL on Alpine Linux..."
 PGHOST=/postgres-volume/run/postgresql
 PGDATA="$PGHOST/data"
 
-echo "=== ENV_VARS_START ==="
-echo "NEXTAUTH_URL=https://example.com"
-echo "NEXTAUTH_SECRET=supersecret"
-echo "CLOUDINARY_CLOUD_NAME=cloudname"
-echo "CLOUDINARY_API_KEY=apikey"
-echo "CLOUDINARY_API_SECRET=apisecret"
-echo "=== ENV_VARS_END ==="
-
+echo "NEXTAUTH_URL=https://example.com" > /tmp/env-vars.sh
+echo "NEXTAUTH_SECRET=supersecret" >> /tmp/env-vars.sh
+echo "CLOUDINARY_CLOUD_NAME=cloudname" >> /tmp/env-vars.sh
+echo "CLOUDINARY_API_KEY=apikey" >> /tmp/env-vars.sh
+echo "CLOUDINARY_API_SECRET=apisecret" >> /tmp/env-vars.sh
 
 echo "Adding exclusive data directory permissions for postgres user..."
 chmod 0700 "$PGDATA"
