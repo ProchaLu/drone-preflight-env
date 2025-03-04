@@ -9,6 +9,10 @@ export PGHOST=/postgres-volume/run/postgresql
 export PGDATA="$PGHOST/data"
 
 echo "EXPORT_ENV_VARS"
+echo "PGHOST=localost"
+echo "PGDATABASE=project_to_check"
+echo "PGUSERNAME=project_to_check"
+echo "PGPASSWORD=project_to_check"
 echo "NEXTAUTH_URL=project_to_check"
 echo "NEXTAUTH_SECRET=project_to_check"
 echo "CLOUDINARY_CLOUD_NAME=project_to_check"
