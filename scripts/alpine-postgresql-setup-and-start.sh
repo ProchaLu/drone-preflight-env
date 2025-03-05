@@ -7,13 +7,13 @@ echo "Setting up PostgreSQL on Alpine Linux..."
 PGHOST=/postgres-volume/run/postgresql
 PGDATA="$PGHOST/data"
 
-echo "=== ENV_VARS_START ==="
+echo "ENVIRONMENT VARIABLES START"
 echo "NEXTAUTH_URL=https://example.com"
 echo "NEXTAUTH_SECRET=supersecret"
 echo "CLOUDINARY_CLOUD_NAME=cloudname"
 echo "CLOUDINARY_API_KEY=apikey"
 echo "CLOUDINARY_API_SECRET=apisecret"
-echo "=== ENV_VARS_END ==="
+echo "ENVIRONMENT VARIABLES END"
 
 echo "Adding exclusive data directory permissions..."
 chmod 0700 "$PGDATA"
