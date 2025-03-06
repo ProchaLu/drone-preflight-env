@@ -27,7 +27,6 @@ echo "listen_addresses='*'" >> "$PGDATA/postgresql.conf"
 
 echo "Starting PostgreSQL..."
 pg_ctl start --pgdata="$PGDATA" --log="/tmp/postgres_startup.log"
-sleep 1
 cat "/tmp/postgres_startup.log"
 
 echo "Creating database, user and schema..."
