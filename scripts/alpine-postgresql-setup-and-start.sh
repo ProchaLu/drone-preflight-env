@@ -8,8 +8,12 @@ echo "Setting up PostgreSQL on Alpine Linux..."
 export PGHOST=/postgres-volume/run/postgresql
 export PGDATA="$PGHOST/data"
 
-# If the project has more environment variables then PGHOST, PGDATABASE, PGUSERNAME and PGPASSWORD, add them to the Array below
-# e.g. echo '[ "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET" ]'
+# If the project requires additional environment variables
+# beyond PGHOST, PGDATABASE, PGUSERNAME and PGPASSWORD, add
+# strings of their names to the array below, eg:
+# echo '[ "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET" ]'
+echo "PREFLIGHT_ENVIRONMENT_VARIABLES:"
+echo '[]'
 echo "PREFLIGHT_ENVIRONMENT_VARIABLES:"
 echo '["NEXTAUTH_URL", "APP_SECRET_KEY", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET", "NEXTAUTH_SECRET"]'
 
