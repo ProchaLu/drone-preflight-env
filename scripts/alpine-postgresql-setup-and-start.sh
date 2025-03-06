@@ -7,9 +7,9 @@ echo "Setting up PostgreSQL on Alpine Linux..."
 PGHOST=/postgres-volume/run/postgresql
 PGDATA="$PGHOST/data"
 
-# If the project has more environment variables then PGHOST, PGDATABASE, PGUSERNAME and PGPASSWORD, add them here with fake values for Preflight
+# If the project has more environment variables then PGHOST, PGDATABASE, PGUSERNAME and PGPASSWORD, add them here for Preflight
 echo "PREFLIGHT_ENVIRONMENT_VARIABLES:"
-echo '{ "NEXTAUTH_URL": "https://myapp.com", "APP_SECRET_KEY": "supersecretkey", "CLOUDINARY_CLOUD_NAME": "cloudname", "CLOUDINARY_API_KEY": "apikey", "CLOUDINARY_API_SECRET": "apisecret" }'
+echo '["NEXTAUTH_URL", "APP_SECRET_KEY", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET"]'
 
 echo "Adding exclusive data directory permissions..."
 chmod 0700 "$PGDATA"
@@ -25,6 +25,7 @@ echo "listen_addresses='*'" >> "$PGDATA/postgresql.conf"
 
 echo "Starting PostgreSQL with pg_ctl..."
 pg_ctl start --pgdata="$PGDATA" > "/tmp/postgres_startup.log" 2>&1
+cat "/tmp/postgres_startup.log"
 
 echo "Checking PostgreSQL status..."
 pg_ctl status -D "$PGDATA"
