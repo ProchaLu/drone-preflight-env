@@ -26,9 +26,9 @@ echo "Enabling connections on all available IP interfaces..."
 echo "listen_addresses='*'" >> "$PGDATA/postgresql.conf"
 
 echo "Starting PostgreSQL..."
-pg_ctl start --pgdata="$PGDATA" --log="/tmp/postgres_startup.log"
+pg_ctl start --pgdata="$PGDATA" --log="/tmp/postgresql-server-start.log"
 sleep 1
-cat "/tmp/postgres_startup.log"
+cat "/tmp/postgresql-server-start.log"
 
 echo "Creating database, user and schema..."
 psql -U postgres postgres << SQL
