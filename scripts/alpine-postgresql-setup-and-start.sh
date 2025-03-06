@@ -11,7 +11,7 @@ export PGDATA="$PGHOST/data"
 # If the project has more environment variables then PGHOST, PGDATABASE, PGUSERNAME and PGPASSWORD, add them to the Array below
 # e.g. echo '[ "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET" ]'
 echo "PREFLIGHT_ENVIRONMENT_VARIABLES:"
-echo '[]'
+echo '["NEXTAUTH_URL", "APP_SECRET_KEY", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET", "NEXTAUTH_SECRET"]'
 
 echo "Adding exclusive data directory permissions for postgres user..."
 chmod 0700 "$PGDATA"
