@@ -7,6 +7,7 @@ echo "Setting up PostgreSQL on Alpine Linux..."
 PGHOST=/postgres-volume/run/postgresql
 PGDATA="$PGHOST/data"
 
+# If the project has more env variables then PGHOST, PGDATABASE, PGUSERNAME and PGPASSWORD, add them here with fake values between the start and end echo statements
 echo "ENVIRONMENT VARIABLES START"
 echo "NEXTAUTH_URL=https://example.com"
 echo "NEXTAUTH_SECRET=supersecret"
@@ -28,7 +29,7 @@ echo "Enabling connections on all available IP interfaces..."
 echo "listen_addresses='*'" >> "$PGDATA/postgresql.conf"
 
 echo "Starting PostgreSQL with pg_ctl..."
-pg_ctl start -D "$PGDATA" > /dev/null
+pg_ctl start --pgdata="$PGDATA" > /dev/null
 
 echo "Checking PostgreSQL status..."
 pg_ctl status -D "$PGDATA"
