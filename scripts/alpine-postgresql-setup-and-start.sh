@@ -7,9 +7,10 @@ echo "Setting up PostgreSQL on Alpine Linux..."
 PGHOST=/postgres-volume/run/postgresql
 PGDATA="$PGHOST/data"
 
-# If the project has more environment variables then PGHOST, PGDATABASE, PGUSERNAME and PGPASSWORD, add them here for Preflight
+# If the project has more environment variables then PGHOST, PGDATABASE, PGUSERNAME and PGPASSWORD, add them to the Array below
+# e.g. echo '[ "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET" ]'
 echo "PREFLIGHT_ENVIRONMENT_VARIABLES:"
-echo '["NEXTAUTH_URL", "APP_SECRET_KEY", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET", "NEXTAUTH_SECRET"]'
+echo '[]'
 
 echo "Adding exclusive data directory permissions..."
 chmod 0700 "$PGDATA"
