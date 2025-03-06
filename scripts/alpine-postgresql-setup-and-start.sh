@@ -9,7 +9,7 @@ PGDATA="$PGHOST/data"
 
 # If the project has more environment variables then PGHOST, PGDATABASE, PGUSERNAME and PGPASSWORD, add them here for Preflight
 echo "PREFLIGHT_ENVIRONMENT_VARIABLES:"
-echo '["NEXTAUTH_URL", "APP_SECRET_KEY", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET"]'
+echo '["NEXTAUTH_URL", "APP_SECRET_KEY", "CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY", "CLOUDINARY_API_SECRET", "NEXTAUTH_SECRET"]'
 
 echo "Adding exclusive data directory permissions..."
 chmod 0700 "$PGDATA"
