@@ -37,5 +37,3 @@ psql -U postgres postgres << SQL
   \\connect $PGDATABASE
   CREATE SCHEMA $PGUSERNAME AUTHORIZATION $PGUSERNAME;
 SQL
-
-echo "PostgreSQL setup complete."
