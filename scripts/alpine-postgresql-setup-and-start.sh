@@ -24,7 +24,7 @@ echo "Enabling connections on all available IP interfaces..."
 echo "listen_addresses='*'" >> "$PGDATA/postgresql.conf"
 
 echo "Starting PostgreSQL with pg_ctl..."
-pg_ctl start --pgdata="$PGDATA" > "/tmp/postgres_startup.log" 2>&1
+pg_ctl start --pgdata="$PGDATA" --log="/tmp/postgres_startup.log"
 cat "/tmp/postgres_startup.log"
 
 echo "Checking PostgreSQL status..."
